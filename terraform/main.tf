@@ -80,7 +80,7 @@ variable "instance_type" {
 
 variable "key_name" {
   type    = string
-  default = "vockey"
+  default = "test"
 }
 
 variable "name_prefix" {

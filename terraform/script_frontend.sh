@@ -8,20 +8,14 @@ echo "=== Starting frontend deployment at $(date) ==="
 
 # Install Docker
 apt-get update -y
-apt-get install -y docker.io git
+apt-get install -y docker.io
 systemctl enable --now docker
 usermod -aG docker ubuntu
 
-# Clone repository
-echo "Cloning repository..."
-rm -rf /opt/app
-git clone --depth=1 https://github.com/RobbeProfetaPXL/todoapp-clouddeploy-RobbeProfetaPXL.git/opt/app
-
 # Build frontend with PUBLIC backend URL
-echo "Building frontend with API URL: http://${backend_ip}:8080"
-cd /opt/app/frontend
-docker build --build-arg APIURL=http://${backend_ip}:8080 -t frontend:latest .
-docker run -d --name frontend --restart=unless-stopped -p 80:80 frontend:latest
+docker pull robbeprofeta/todo-frontend:latest
+docker build --build-arg APIURL=http://${backend_ip}:8080 -t robbeprofeta/todo-frontend:latest .
+docker run -d --name frontend --restart=unless-stopped -p 80:80 robbeprofeta/todo-frontend:latest
 
 echo "Frontend is running on port 80"
 echo "Frontend configured to connect to: http://${backend_ip}:8080"
