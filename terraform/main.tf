@@ -5,23 +5,19 @@ terraform {
 
 provider "aws" {}
 
-# Hardcoded Ubuntu AMI ID for us-east-1
 variable "ami_id" {
   type    = string
-  default = "ami-0e2c8caa4b6378d8c"  # Ubuntu 22.04 LTS in us-east-1
+  default = "ami-0e2c8caa4b6378d8c" 
 }
 
 resource "aws_security_group" "sg" {
   name_prefix = "${var.name_prefix}-sg-"
-  # Don't specify vpc_id - uses default VPC automatically
-
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
   ingress {
     from_port   = 8080
     to_port     = 8080
@@ -35,7 +31,6 @@ resource "aws_security_group" "sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -47,29 +42,24 @@ resource "aws_security_group" "sg" {
 }
 
 resource "aws_instance" "backend" {
-  ami                         = var.ami_id
-  instance_type               = var.instance_type
-  # Don't specify subnet_id - uses default subnet automatically
-  vpc_security_group_ids      = [aws_security_group.sg.id]
-  associate_public_ip_address = true
-  key_name                    = var.key_name != "" ? var.key_name : null
-  user_data                   = file("${path.module}/script_backend.sh")
-  
+  ami = var.ami_id
+  instance_type = var.instance_type
+  vpc_security_group_ids = [aws_security_group.sg.id]
+  key_name = var.key_name != "" ? var.key_name : null
+  user_data = file("${path.module}/script_backend.sh")
   tags = { Name = "${var.name_prefix}-backend" }
 }
 
 resource "aws_instance" "frontend" {
-  ami                         = var.ami_id
-  instance_type               = var.instance_type
-  # Don't specify subnet_id - uses default subnet automatically
-  vpc_security_group_ids      = [aws_security_group.sg.id]
+  ami = var.ami_id
+  instance_type = var.instance_type
+  vpc_security_group_ids = [aws_security_group.sg.id]
   associate_public_ip_address = true
-  key_name                    = var.key_name != "" ? var.key_name : null
+  key_name = var.key_name != "" ? var.key_name : null
   
   user_data = templatefile("${path.module}/script_frontend.sh", {
-    backend_ip = aws_instance.backend.public_ip
+    backend_ip = aws_instance.backend.private_ip
   })
-  
   tags = { Name = "${var.name_prefix}-frontend" }
 }
 
