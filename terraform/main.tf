@@ -50,6 +50,7 @@ resource "aws_instance" "database" {
   ami = var.ami_id
   instance_type = var.instance_type
   vpc_security_group_ids = [aws_security_group.sg.id]
+  associate_public_ip_address = true
   key_name = var.key_name != "" ? var.key_name : null
   user_data = file("${path.module}/script_database.sh")
   tags = { Name = "${var.name_prefix}-database" }
@@ -59,6 +60,7 @@ resource "aws_instance" "backend" {
   ami = var.ami_id
   instance_type = var.instance_type
   vpc_security_group_ids = [aws_security_group.sg.id]
+  associate_public_ip_address = true
   key_name = var.key_name != "" ? var.key_name : null
   user_data = templatefile("${path.module}/script_backend.sh", {
     mongo_url = "mongodb://mongodb:mongodb@${aws_instance.database.public_ip}:27017/mongodb"
@@ -93,18 +95,6 @@ variable "name_prefix" {
   type    = string
   default = "todoapp"
 }
-variable "mongo_user" { 
-  type = string
-  default = "appuser" 
-  }
-variable "mongo_password"{ 
-  type = string 
-  default = "apppass" 
-  } 
-variable "mongo_db"{ 
-  type = string
-  default = "todoapp" 
-  } 
 
 
 output "backend_public_ip" { 
