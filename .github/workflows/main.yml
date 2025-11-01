@@ -12,6 +12,12 @@ jobs:
       run: 
         working-directory: backend
     steps: 
+      - uses: actions/checkout@v4
+      - name: Debug repo layout (handig bij pad-issues)
+        run: |
+          pwd
+          ls -la
+          ls -la frontend || true
       - name: just for the pipeline
         run: echo hier moeten normaal testen zijn
 
