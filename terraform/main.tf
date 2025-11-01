@@ -63,7 +63,7 @@ resource "aws_instance" "backend" {
   associate_public_ip_address = true
   key_name = var.key_name != "" ? var.key_name : null
   user_data = templatefile("${path.module}/script_backend.sh", {
-  mongo_url = "mongodb://${aws_instance.database.private_ip}:27017/mongodb?directConnection=true"
+    mongo_url = "mongodb://${aws_instance.database.private_ip}:27017/todoapp?directConnection=true"
   })
   tags = { Name = "${var.name_prefix}-backend" }
 }

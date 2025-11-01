@@ -29,13 +29,22 @@ for i in {1..40}; do
   echo "Nog niet bereikbaar, retry $i..."
   sleep 3
 done
+
 if ! nc -z -w 2 "$DB_HOST" "$DB_PORT"; then
   echo "Mongo blijft onbereikbaar na retries. Stop."
   exit 1
 fi
 
 # Build and run backend
+DBURL="$${MONGO_URL}"
+echo "DBURL=$DBURL"
 
 
 docker pull robbeprofeta/todo-backend:latest
-docker run -d --name backend --restart=unless-stopped -p 8080:3000 -e PORT=3000 -e MONGO_URL="$${MONGO_URL}" -e DB_URL="$${MONGO_URL}" robbeprofeta/todo-backend:latest
+
+docker rm -f backend 2>/dev/null || true
+docker run -d --name backend --restart=unless-stopped \
+  -p 8080:3000 \
+  -e PORT=3000 \
+  -e DBURL="$DBURL" \
+  robbeprofeta/todo-backend:latest
