@@ -7,6 +7,7 @@ provider "aws" {}
 
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16" 
+  enable_dns_support = true
   enable_dns_hostnames = true
 }
 resource "aws_internet_gateway" "igw" {
@@ -110,6 +111,10 @@ resource "aws_instance" "backend" {
   key_name = var.key_name != "" ? var.key_name : null
   user_data = file("${path.module}/script_backend.sh")
   tags = { Name = "${var.name_prefix}-backend" }
+  depends_on = [
+    aws_nat_gateway.natgw, 
+    aws_route_table_association.private_a
+   ]  
 }
 
 resource "aws_instance" "frontend" {
