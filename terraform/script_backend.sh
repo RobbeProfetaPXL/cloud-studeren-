@@ -29,6 +29,11 @@ for i in {1..40}; do
   echo "Nog niet bereikbaar, retry $i..."
   sleep 3
 done
+if ! nc -z -w 2 "$DB_HOST" "$DB_PORT"; then
+  echo "Mongo blijft onbereikbaar na retries. Stop."
+  exit 1
+fi
+
 # Build and run backend
 
 
