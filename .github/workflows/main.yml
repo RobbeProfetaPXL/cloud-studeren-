@@ -6,6 +6,15 @@ on:
     branches: ["main"]
 
 jobs:
+  frontend-tests: 
+    runs-on: ubuntu-latest
+    defaults:
+      run: 
+        working-directory: backend
+    steps: 
+      - name: just for the pipeline
+        run: echo hier moeten normaal testen zijn
+
   backend-tests: 
     runs-on: ubuntu-latest
     defaults:
