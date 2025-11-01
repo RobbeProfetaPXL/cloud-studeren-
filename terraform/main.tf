@@ -76,7 +76,7 @@ resource "aws_instance" "frontend" {
   key_name = var.key_name != "" ? var.key_name : null
   
   user_data = templatefile("${path.module}/script_frontend.sh", {
-    backend_ip = aws_instance.backend.private_ip
+    backend_ip = aws_instance.backend.public_ip
   })
   tags = { Name = "${var.name_prefix}-frontend" }
 }
