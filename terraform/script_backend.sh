@@ -16,12 +16,12 @@ sleep 5
 
 MONGO_URL="${mongo_url}"
 
-DB_HOST="$(echo "$MONGO_URL" | sed -E 's#^mongodb://([^@]+@)?([^,/:]+).*#\2#')"
-DB_PORT="$(echo "$MONGO_URL" | sed -nE 's#.*:([0-9]+).*#\1#p')"
-DB_PORT="${DB_PORT:-27017}"
-echo "Wachten op Mongo (${DB_HOST}:${DB_PORT})..."
+DB_HOST="$(echo "$$MONGO_URL" | sed -E 's#^mongodb://([^@]+@)?([^,/:]+).*#\2#')"
+DB_PORT="$(echo "$$MONGO_URL" | sed -nE 's#.*:([0-9]+).*#\1#p')"
+DB_PORT="$${DB_PORT:-27017}"
+echo "Wachten op Mongo ($${DB_HOST}:$${DB_PORT})..."
 for i in {1..40}; do
-  if nc -z -w 2 "${DB_HOST}" "${DB_PORT}"; then 
+  if nc -z -w 2 "$${DB_HOST}" "$${DB_PORT}"; then 
     echo "Mongo is bereikbaar."
     break
   fi
@@ -32,4 +32,4 @@ done
 
 
 docker pull robbeprofeta/todo-backend:latest
-docker run -d --name backend --restart=unless-stopped -p 8080:3000 -e PORT=3000 -e MONGO_URL="$MONGO_URL" -e DB_URL="$MONGO_URL" robbeprofeta/todo-backend:latest
+docker run -d --name backend --restart=unless-stopped -p 8080:3000 -e PORT=3000 -e MONGO_URL="$$MONGO_URL" -e DB_URL="$$MONGO_URL" robbeprofeta/todo-backend:latest
