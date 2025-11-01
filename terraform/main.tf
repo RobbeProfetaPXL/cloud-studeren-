@@ -45,6 +45,7 @@ resource "aws_instance" "backend" {
   ami = var.ami_id
   instance_type = var.instance_type
   vpc_security_group_ids = [aws_security_group.sg.id]
+  associate_public_ip_address = false
   key_name = var.key_name != "" ? var.key_name : null
   user_data = file("${path.module}/script_backend.sh")
   tags = { Name = "${var.name_prefix}-backend" }
